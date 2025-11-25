@@ -18,6 +18,8 @@ def get_connection():
     )
 
 
+
+# user related database operations
 def get_user_by_netid(netid):
     dbconn = get_connection()
     with dbconn:
@@ -53,6 +55,91 @@ def update_user(netid, email=None, phone=None):
                 values.append(phone)
             values.append(netid)
             sql = f"UPDATE `users` SET {', '.join(fields)} WHERE `netid`=%s"
+            cursor.execute(sql, tuple(values))
+        dbconn.commit()
+        return True
+    return False
+
+
+
+# product related database functions
+
+
+
+def add_product(vendor_netid, name, price, category, image_id=None):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """INSERT INTO `products` 
+                     (`vendor_netid`, `name`, `price`, `category`, `image_id`) 
+                     VALUES (%s, %s, %s, %s, %s)"""
+            cursor.execute(sql, (vendor_netid, name, price, category, image_id))
+        dbconn.commit()
+        return True
+    return False
+
+
+def get_products_by_id(product_id):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = "SELECT * FROM `products` WHERE `product_id`=%s"
+            cursor.execute(sql, (product_id,))
+            result = cursor.fetchone()
+            return result
+    return None
+
+def get_all_products():
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = "SELECT * FROM `products` ORDER BY `created_at` DESC"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    return []
+
+def get_products_by_vendor(vendor_netid):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = "SELECT * FROM `products` WHERE `vendor_netid`=%s ORDER BY `created_at` DESC"
+            cursor.execute(sql, (vendor_netid,))
+            result = cursor.fetchall()
+            return result
+    return []
+
+
+def delete_product(product_id):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = "DELETE FROM `products` WHERE `product_id`=%s"
+            cursor.execute(sql, (product_id,))
+        dbconn.commit()
+        return True
+    return False
+
+def update_product(product_id, name=None, price=None, category=None, image_id=None):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            fields = []
+            values = []
+            if name:
+                fields.append("name=%s")
+                values.append(name)
+            if price:
+                fields.append("price=%s")
+                values.append(price)
+            if category:
+                fields.append("category=%s")
+                values.append(category)
+            if image_id:
+                fields.append("image_id=%s")
+                values.append(image_id)
+            values.append(product_id)
+            sql = f"UPDATE `products` SET {', '.join(fields)} WHERE `product_id`=%s"
             cursor.execute(sql, tuple(values))
         dbconn.commit()
         return True
