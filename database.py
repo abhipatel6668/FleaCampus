@@ -64,8 +64,6 @@ def update_user(netid, email=None, phone=None):
 
 # product related database functions
 
-
-
 def add_product(vendor_netid, name, price, category, image_id=None):
     dbconn = get_connection()
     with dbconn:
@@ -141,6 +139,20 @@ def update_product(product_id, name=None, price=None, category=None, image_id=No
             values.append(product_id)
             sql = f"UPDATE `products` SET {', '.join(fields)} WHERE `product_id`=%s"
             cursor.execute(sql, tuple(values))
+        dbconn.commit()
+        return True
+    return False
+
+# image related database functions
+
+def add_image(img_url, time_stamp = None):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """INSERT INTO `images` 
+                     (`image_url`, `created_at`) 
+                     VALUES (%s, %s)"""
+            cursor.execute(sql, (img_url, time_stamp))
         dbconn.commit()
         return True
     return False
