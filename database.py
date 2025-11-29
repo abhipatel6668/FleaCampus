@@ -81,7 +81,12 @@ def get_products_by_id(product_id):
     dbconn = get_connection()
     with dbconn:
         with dbconn.cursor() as cursor:
-            sql = "SELECT * FROM `products` WHERE `product_id`=%s"
+            sql = """
+                SELECT p.*, i.image_url 
+                FROM `products` p
+                LEFT JOIN `images` i ON p.image_id = i.image_id
+                WHERE p.`product_id`=%s
+            """
             cursor.execute(sql, (product_id,))
             result = cursor.fetchone()
             return result
@@ -91,7 +96,12 @@ def get_all_products():
     dbconn = get_connection()
     with dbconn:
         with dbconn.cursor() as cursor:
-            sql = "SELECT * FROM `products` ORDER BY `created_at` DESC"
+            sql = """
+                SELECT p.*, i.image_url 
+                FROM `products` p
+                LEFT JOIN `images` i ON p.image_id = i.image_id
+                ORDER BY p.`created_at` DESC
+            """
             cursor.execute(sql)
             result = cursor.fetchall()
             return result
@@ -101,7 +111,13 @@ def get_products_by_vendor(vendor_netid):
     dbconn = get_connection()
     with dbconn:
         with dbconn.cursor() as cursor:
-            sql = "SELECT * FROM `products` WHERE `vendor_netid`=%s ORDER BY `created_at` DESC"
+            sql = """
+                SELECT p.*, i.image_url 
+                FROM `products` p
+                LEFT JOIN `images` i ON p.image_id = i.image_id
+                WHERE p.`vendor_netid`=%s 
+                ORDER BY p.`created_at` DESC
+            """
             cursor.execute(sql, (vendor_netid,))
             result = cursor.fetchall()
             return result
@@ -156,3 +172,42 @@ def add_image(img_url, time_stamp = None):
         dbconn.commit()
         return True
     return False
+
+def add_image_and_get_id(img_url, time_stamp = None):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """INSERT INTO `images` 
+                     (`image_url`, `created_at`) 
+                     VALUES (%s, %s)"""
+            cursor.execute(sql, (img_url, time_stamp))
+            image_id = cursor.lastrowid
+        dbconn.commit()
+        return image_id
+    return None
+
+
+# order related database functions
+def add_order(user_id, product_id):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """INSERT INTO `orders` (`user_id`, `product_id`) VALUES (%s, %s)"""
+            cursor.execute(sql, (user_id, product_id))
+        dbconn.commit()
+        return True
+    return False
+
+def get_orders_by_user(user_id):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """SELECT o.*, p.name AS product_name, p.price AS product_price 
+                     FROM `orders` o 
+                     JOIN `products` p ON o.product_id = p.product_id 
+                     WHERE o.user_id=%s 
+                     ORDER BY o.created_at DESC"""
+            cursor.execute(sql, (user_id,))
+            result = cursor.fetchall()
+            return result
+    return []
