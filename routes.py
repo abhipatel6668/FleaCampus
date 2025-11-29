@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from controllers import UserService, ProductService, OrderService
+from controllers import UserService, ProductService, OrderService, ReviewService
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -108,4 +108,25 @@ def create_order():
 @api.route('/orders/user/<string:user_id>', methods=['GET'])
 def get_orders_by_user(user_id):
     response, status = OrderService.get_orders_by_user(user_id)
+    return jsonify(response), status
+
+
+# routes for review actions
+@api.route('/reviews', methods=['POST'])
+def create_review():
+    data = request.get_json()
+    if not data or data.get('user_id') is None or data.get('product_id') is None or data.get('rating') is None:
+        return jsonify({"error": "Missing required fields."}), 400
+    
+    response, status = ReviewService.create_review(
+        user_id=data['user_id'],
+        product_id=data['product_id'],
+        rating=data['rating'],
+        review_text=data.get('review_text')
+    )
+    return jsonify(response), status
+
+@api.route('/reviews/product/<int:product_id>', methods=['GET'])
+def get_reviews_for_product(product_id):
+    response, status = ReviewService.get_reviews_for_product(product_id)
     return jsonify(response), status

@@ -212,3 +212,33 @@ def get_orders_by_user(user_id):
             result = cursor.fetchall()
             return result
     return []
+
+
+# reviews related database functions
+def add_review(user_id, product_id, rating, review_text=None):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """INSERT INTO `reviews` 
+                     (`user_id`, `product_id`, `rating`, `review_text`) 
+                     VALUES (%s, %s, %s, %s)"""
+            cursor.execute(sql, (user_id, product_id, rating, review_text))
+        dbconn.commit()
+        return True
+    return False
+
+
+def get_reviews_by_product(product_id):
+    dbconn = get_connection()
+    with dbconn:
+        with dbconn.cursor() as cursor:
+            sql = """
+                SELECT r.review_id, r.user_id, r.rating, r.review_text, r.created_at
+                FROM `reviews` r
+                WHERE r.product_id = %s
+                ORDER BY r.created_at DESC
+            """
+            cursor.execute(sql, (product_id,))
+            result = cursor.fetchall()
+            return result
+    return []

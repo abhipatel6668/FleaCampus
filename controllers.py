@@ -2,7 +2,7 @@ from database import get_user_by_netid, insert_user, update_user
 from database import delete_product, add_product, get_products_by_id, get_all_products, get_products_by_vendor, update_product
 from database import add_order, get_orders_by_user
 from database import add_image_and_get_id
-
+from database import add_review, get_reviews_by_product
 
 class UserService:
     @staticmethod
@@ -117,3 +117,29 @@ class OrderService:
         
         orders = get_orders_by_user(user_id)
         return orders, 200
+
+
+class ReviewService:
+    @staticmethod
+    def create_review(user_id, product_id, rating, review_text=None):
+        if not get_user_by_netid(user_id):
+            return {"error": "User not found."}, 404
+        if not get_products_by_id(product_id):
+            return {"error": "Product not found."}, 404
+
+        try:
+            success = add_review(user_id, product_id, rating, review_text)
+            if success:
+                return {"message": "Review added successfully."}, 201
+            else:
+                return {"error": "Failed to add review."}, 500
+        except Exception as e:
+            return {"error": "Failed to add review. You may have already reviewed this product."}, 409
+
+    @staticmethod
+    def get_reviews_for_product(product_id):
+        if not get_products_by_id(product_id):
+            return {"error": "Product not found."}, 404
+        
+        reviews = get_reviews_by_product(product_id)
+        return reviews, 200
