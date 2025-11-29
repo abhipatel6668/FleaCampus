@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from controllers import UserService, ProductService
+from controllers import UserService, ProductService, OrderService
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -47,7 +47,7 @@ def add_product():
         name=data['name'],
         price=data['price'],
         category=data['category'],
-        image_id=data.get('image_id')
+        image_url=data.get('image_url')
     )
     return jsonify(response), status
 
@@ -87,6 +87,25 @@ def update_product(product_id):
         name=data.get('name'),
         price=data.get('price'),
         category=data.get('category'),
-        image_id=data.get('image_id')
+        image_url=data.get('image_url')
     )
+    return jsonify(response), status
+
+
+
+#routes for order actions
+@api.route('/orders', methods=['POST'])
+def create_order():
+    data = request.get_json()
+    if not data or data.get('user_id') is None or data.get('product_id') is None:
+        return jsonify({"error": "Missing required fields."}), 400
+    
+    response, status = OrderService.create_order(user_id=data['user_id'], product_id=data['product_id'])
+    return jsonify(response), status
+
+
+# for an account history page
+@api.route('/orders/user/<string:user_id>', methods=['GET'])
+def get_orders_by_user(user_id):
+    response, status = OrderService.get_orders_by_user(user_id)
     return jsonify(response), status
