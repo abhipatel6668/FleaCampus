@@ -101,7 +101,7 @@ class OrderService:
     def create_order(user_id, product_id):
         if not get_user_by_netid(user_id):
             return {"error": "User not found."}, 404
-        if not get_products_by_id(product_id):
+        if not get_products_by_id(int(product_id)):
             return {"error": "Product not found."}, 404
 
         success = add_order(user_id, product_id)
@@ -116,6 +116,9 @@ class OrderService:
             return {"error": "User not found."}, 404
         
         orders = get_orders_by_user(user_id)
+        for order in orders:
+            if order.get('price'):
+                order['price'] = float(order['price'])
         return orders, 200
 
 

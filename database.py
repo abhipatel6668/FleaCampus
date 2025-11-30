@@ -202,9 +202,10 @@ def get_orders_by_user(user_id):
     dbconn = get_connection()
     with dbconn:
         with dbconn.cursor() as cursor:
-            sql = """SELECT o.order_id, o.order_date, p.product_id, p.name, p.price, p.category, p.image_id
+            sql = """SELECT o.order_id, o.order_date, p.product_id, p.name, p.price, p.category, i.image_url
                 FROM `orders` o
                 JOIN `products` p ON o.product_id = p.product_id
+                LEFT JOIN `images` i ON p.image_id = i.image_id
                 WHERE o.user_id = %s
                 ORDER BY o.order_date DESC
             """
