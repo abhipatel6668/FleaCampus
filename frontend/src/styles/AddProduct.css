@@ -1,0 +1,59 @@
+.add-product-container {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 600px;
+}
+
+.add-product-container h2 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eee;
+}
+
+.add-product-form .form-group {
+  margin-bottom: 20px;
+}
+
+.add-product-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+}
+
+.add-product-form input,
+.add-product-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.add-product-form input:focus,
+.add-product-form select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-submit-product {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.btn-submit-product:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
