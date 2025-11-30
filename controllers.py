@@ -1,3 +1,4 @@
+import datetime
 from database import get_user_by_netid, insert_user, update_user
 from database import delete_product, add_product, get_products_by_id, get_all_products, get_products_by_vendor, update_product
 from database import add_order, get_orders_by_user
@@ -116,9 +117,22 @@ class OrderService:
             return {"error": "User not found."}, 404
         
         orders = get_orders_by_user(user_id)
+        now = datetime.datetime.now()
         for order in orders:
             if order.get('price'):
                 order['price'] = float(order['price'])
+
+
+
+            # create a simulated delivery timeline
+            order_date = order.get('order_date')
+            if order_date:
+                if now - order_date < datetime.timedelta(days=1):
+                    order['status'] = 'Processing'
+                elif now - order_date < datetime.timedelta(days=3):
+                    order['status'] = 'Shipped'
+                else:
+                    order['status'] = 'Delivered'
         return orders, 200
 
 
