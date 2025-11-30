@@ -13,6 +13,7 @@ function Store({ user, onLogout }) {
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     fetchProducts();
@@ -36,6 +37,11 @@ function Store({ user, onLogout }) {
     }
   };
 
+  const showNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000);
+  };
+
   const addToCart = (product) => {
     const existingItem = cart.find(item => item.product_id === product.product_id);
     let newCart;
@@ -52,6 +58,7 @@ function Store({ user, onLogout }) {
     
     setCart(newCart);
     localStorage.setItem('fleacampus_cart', JSON.stringify(newCart));
+    showNotification(`${product.name} added to cart.`);
   };
 
   const removeFromCart = (productId) => {
@@ -91,6 +98,7 @@ function Store({ user, onLogout }) {
 
   return (
     <div className="store-container">
+      {notification && <div className="cart-notification">{notification}</div>}
       <header className="store-header">
         <div className="header-content">
           <h1>FleaCampus Marketplace</h1>
