@@ -3,7 +3,7 @@ import os
 import argparse
 from faker import Faker
 from datetime import datetime, timedelta
-from database import insert_user, add_product, add_image
+from database import insert_user, add_product, add_image, add_image_and_get_id
 from dotenv import load_dotenv
 
 load_dotenv(".flaskenv")
@@ -20,7 +20,8 @@ def load_fake_sellers():
     num_products = 0
 
     for category in categories:
-        with open(".\\imgURLs\\" + category + ".csv") as f:
+        filepath = os.path.join("imgURLs", category + ".csv")
+        with open(filepath) as f:
             while True:
                 line = f.readline()
                 
@@ -29,7 +30,7 @@ def load_fake_sellers():
                     break
 
                 product_name = line.split(',')[0] + str(unique_id_num)
-                img_url = line.split(',')[1]
+                img_url = line.split(',')[1].strip()
 
                 print(product_name, img_url, num_products)
 
@@ -38,14 +39,15 @@ def load_fake_sellers():
                 email = netID + "@uic.edu"
                 insert_user(netID, email)
 
-                #create fake image
-                add_image(img_url)
+                #create fake image and get its id
+                image_id = add_image_and_get_id(img_url)
+                #add_image(img_url)
 
                 #create fake product
-                add_product(netID, product_name, fake.pricetag().replace('$', '').replace(',', ''), "furniture", image_id)
+                add_product(netID, product_name, fake.pricetag().replace('$', '').replace(',', ''), category, image_id)
 
                 unique_id_num += 1
-                image_id += 1
+                #image_id += 1
                 num_products += 1
 
 if __name__ == "__main__":
