@@ -43,9 +43,9 @@ function Orders({ currentUser }) {
         {orders.map(order => (
           <div key={order.order_id} className="order-item">
             <div className="order-image">
-              {order.image_id ? (
-                <div className="order-image-placeholder">
-                  Image ID: {order.image_id}
+              {order.image_url ? (
+                <div className="order-image">
+                  <img src={order.image_url} alt={order.name} />
                 </div>
               ) : (
                 <div className="no-image-order">No Image</div>
