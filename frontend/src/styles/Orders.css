@@ -107,6 +107,25 @@
   font-size: 14px;
 }
 
+.order-status {
+  font-weight: 500;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.status-processing {
+  color: #f59e0b; 
+}
+
+.status-shipped {
+  color: #3b82f6;
+}
+
+.status-delivered {
+  color: #22c55e;
+}
+
+
 @media (max-width: 768px) {
   .order-item {
     grid-template-columns: 1fr;
@@ -122,3 +141,4 @@
     text-align: left;
   }
 }
+

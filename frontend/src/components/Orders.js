@@ -63,6 +63,9 @@ function Orders({ currentUser }) {
                 Ordered: {new Date(order.order_date).toLocaleDateString()}
               </p>
               <p className="order-id">Order #{order.order_id}</p>
+              <p className={`order-status status-${order.status?.toLowerCase()}`}>
+                Status: {order.status}
+              </p>
             </div>
           </div>
         ))}
