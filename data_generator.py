@@ -20,7 +20,7 @@ def load_fake_reviews(unique_id_num):
     #product is a dictionary, keys are product_id, vendor_netid, name, price, catefory, image_id, created_at, image_url
     for product in products:
         product_id =  product.get("product_id")
-        for i in range(fake.random_int(min=3, max=9)):
+        for i in range(fake.random_int(min=3, max=5)):
             #create fake buyer
             netID = fake.name().replace(' ', '') + str(unique_id_num)
             email = netID + "@uic.edu"
